@@ -1,0 +1,435 @@
+
+
+let amount = "";
+let selectedMethod = "";
+
+const amountScreen = document.getElementById("amountScreen");
+const methodsScreen = document.getElementById("methodsScreen");
+const confirmScreen = document.getElementById("confirmScreen");
+const successScreen = document.getElementById("successScreen");
+
+const amountDisplay = document.getElementById("amount");
+const selectedAmount = document.getElementById("selectedAmount");
+const selectedMethodDisplay = document.getElementById("selectedMethod");
+const payButton = document.getElementById("payButton");
+
+function updateAmount() {
+  if (amount === "") {
+    amountDisplay.textContent = "UGX 0";
+    return;
+  }
+
+  const number = Number(amount);
+  amountDisplay.textContent =
+    "UGX " + number.toLocaleString("en-UG");
+}
+
+function addNumber(number) {
+  if (amount.length >= 9) return;
+
+  if (amount === "" && number === "0") return;
+
+  amount += number;
+  updateAmount();
+}
+
+function deleteNumber() {
+  amount = amount.slice(0, -1);
+  updateAmount();
+}
+
+function clearAmount() {
+  amount = "";
+  updateAmount();
+}
+
+function goMethods() {
+  const value = Number(amount);
+
+  if (!value || value <= 0) {
+    alert("Please enter an amount first.");
+    return;
+  }
+
+  amountScreen.classList.remove("active");
+  methodsScreen.classList.add("active");
+}
+
+function selectMethod(method) {
+  selectedMethod = method;
+
+  document.querySelectorAll(".method").forEach((button) => {
+    button.classList.remove("selected");
+  });
+
+  const button = document.querySelector(
+    `[data-method="${method}"]`
+  );
+
+  if (button) {
+    button.classList.add("selected");
+  }
+
+  selectedAmount.textContent =
+    "UGX " + Number(amount).toLocaleString("en-UG");
+
+  selectedMethodDisplay.textContent = method;
+
+  methodsScreen.classList.remove("active");
+  confirmScreen.classList.add("active");
+}
+
+function goBackToAmount() {
+  methodsScreen.classList.remove("active");
+  amountScreen.classList.add("active");
+}
+
+function goBackToMethods() {
+  confirmScreen.classList.remove("active");
+  methodsScreen.classList.add("active");
+}
+
+function makePayment() {
+  if (!selectedMethod || !amount) {
+    alert("Please select a payment method.");
+    return;
+  }
+
+  payButton.disabled = true;
+  payButton.textContent = "Processing...";
+
+  setTimeout(() => {
+    confirmScreen.classList.remove("active");
+    successScreen.classList.add("active");
+
+    payButton.disabled = false;
+    payButton.textContent = "Confirm Payment";
+  }, 1200);
+}
+
+function newPayment() {
+  amount = "";
+  selectedMethod = "";
+
+  document.querySelectorAll(".method").forEach((button) => {
+    button.classList.remove("selected");
+  });
+
+  successScreen.classList.remove("active");
+  amountScreen.classList.add("active");
+
+  updateAmount();
+}
+
+updateAmount();
+
+
+===== style.css =====
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f6f8;
+  color: #111827;
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  margin: auto;
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.header {
+  padding: 22px 20px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logo span {
+  color: #2563eb;
+}
+
+.demo {
+  font-size: 11px;
+  background: #fff4cc;
+  color: #765900;
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.screen {
+  display: none;
+  padding: 24px 20px 30px;
+  min-height: calc(100vh - 70px);
+}
+
+.screen.active {
+  display: block;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-top: 10px;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-top: 8px;
+  margin-bottom: 30px;
+}
+
+.amount-box {
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.amount {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  word-break: break-word;
+}
+
+.currency {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 7px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.key {
+  height: 65px;
+  border-radius: 18px;
+  background: #f1f3f5;
+  font-size: 23px;
+  font-weight: 700;
+  color: #111827;
+  transition: 0.15s;
+}
+
+.key:active {
+  transform: scale(0.95);
+  background: #dfe3e8;
+}
+
+.continue {
+  width: 100%;
+  margin-top: 20px;
+  height: 58px;
+  border-radius: 17px;
+  background: #2563eb;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.continue:active {
+  transform: scale(0.98);
+}
+
+.back {
+  background: transparent;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.method {
+  width: 100%;
+  min-height: 75px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 18px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 14px;
+  transition: 0.15s;
+}
+
+.method:active {
+  transform: scale(0.98);
+}
+
+.method.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.method-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  font-size: 21px;
+  flex-shrink: 0;
+}
+
+.method-name {
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.method-info {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.confirm-card {
+  background: #f8fafc;
+  border-radius: 22px;
+  padding: 22px;
+  margin-top: 25px;
+}
+
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.confirm-row:last-child {
+  border-bottom: none;
+}
+
+.confirm-label {
+  color: #6b7280;
+}
+
+.confirm-value {
+  font-weight: 800;
+  text-align: right;
+}
+
+.pay {
+  width: 100%;
+  height: 58px;
+  margin-top: 22px;
+  background: #16a34a;
+  color: white;
+  border-radius: 17px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.pay:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.success-icon {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 900;
+  margin-bottom: 22px;
+}
+
+.success h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.success p {
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.new-payment {
+  width: 100%;
+  height: 56px;
+  margin-top: 28px;
+  background: #2563eb;
+  color: white;
+  border-radius: 17px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.notice {
+  margin-top: 20px;
+  padding: 13px;
+  background: #fff7ed;
+  border-radius: 14px;
+  color: #9a3412;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (min-width: 481px) {
+  body {
+    padding: 20px;
+  }
+
+  .app {
+    min-height: 800px;
+    border-radius: 28px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+  }
+
+  .screen {
+    min-height: 730px;
+  }
+}
